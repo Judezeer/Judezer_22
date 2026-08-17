@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Appointments — RHU Makilala HMIS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head><body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="assets/js/shell.js"></script>
+<script>
+const appts = [
+    {id:47, patient:'Juan Dela Cruz', code:'PT-000001', date:'Aug 18, 2026', time:'10:00 AM', purpose:'General consultation', status:'pending'},
+    {id:46, patient:'Maria Santos', code:'PT-000002', date:'Aug 18, 2026', time:'9:00 AM', purpose:'Prenatal checkup', status:'approved'},
+    {id:45, patient:'Pedro Reyes', code:'PT-000003', date:'Aug 18, 2026', time:'10:30 AM', purpose:'Vaccination', status:'approved'},
+    {id:44, patient:'Ana Villanueva', code:'PT-000004', date:'Aug 17, 2026', time:'11:00 AM', purpose:'Follow-up', status:'completed'},
+    {id:43, patient:'Rosa Aquino', code:'PT-000005', date:'Aug 17, 2026', time:'2:00 PM', purpose:'BP monitoring', status:'completed'},
+    {id:42, patient:'Miguel Torres', code:'PT-000006', date:'Aug 16, 2026', time:'9:30 AM', purpose:'General consultation', status:'completed'},
+    {id:41, patient:'Elena Garcia', code:'PT-000007', date:'Aug 16, 2026', time:'3:00 PM', purpose:'Prenatal checkup', status:'rejected'},
+    {id:40, patient:'Carlos Mendoza', code:'PT-000008', date:'Aug 15, 2026', time:'10:00 AM', purpose:'Vaccination', status:'cancelled'},
+    {id:39, patient:'Linda Ramos', code:'PT-000009', date:'Aug 15, 2026', time:'1:00 PM', purpose:'Follow-up', status:'completed'},
+    {id:38, patient:'Ramon Cruz', code:'PT-000010', date:'Aug 14, 2026', time:'11:30 AM', purpose:'Consultation', status:'completed'},
+];
+const statusBadge = s => {
+    const map = {pending:'warning', approved:'info', completed:'success', rejected:'danger', cancelled:'secondary'};
+    return `<span class="badge bg-${map[s]}-subtle text-${map[s]} rounded-pill px-3 py-2">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;
+};
+
+const content = `
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div><h4 class="fw-bold mb-1">Appointments</h4><small class="text-muted">Approve, reschedule and complete patient visits.</small></div>
+    <button class="btn btn-primary" onclick="Swal.fire('Demo Mode','Create appointment form here.','info')"><i class="fa-solid fa-calendar-plus me-2"></i>New Appointment</button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table id="tbl" class="table">
+            <thead><tr><th>#</th><th>Patient</th><th>Date</th><th>Time</th><th>Purpose</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                ${appts.map(a => `
+                    <tr>
+                        <td>#${a.id}</td>
+                        <td><div class="fw-semibold">${a.patient}</div><small class="text-muted">${a.code}</small></td>
+                        <td>${a.date}</td>
+                        <td>${a.time}</td>
+                        <td>${a.purpose}</td>
+                        <td>${statusBadge(a.status)}</td>
+                        <td class="text-end">
+                            <div class="btn-group">
+                                ${a.status === 'pending' ? `<button class="btn btn-sm btn-success" onclick="demoAct('approved')"><i class="fa-solid fa-check"></i></button><button class="btn btn-sm btn-danger" onclick="demoAct('rejected')"><i class="fa-solid fa-xmark"></i></button>` : ''}
+                                ${a.status === 'approved' ? `<button class="btn btn-sm btn-primary" onclick="demoAct('completed')"><i class="fa-solid fa-flag-checkered"></i></button>` : ''}
+                                <button class="btn btn-sm btn-outline-primary" onclick="Swal.fire('Demo Mode','Edit form here.','info')"><i class="fa-solid fa-pen"></i></button>
+                            </div>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+</div>
+`;
+
+mountShell('admin', 'appointments', 'Appointments', content);
+$(function(){ $('#tbl').DataTable({pageLength:10, order:[[2,'desc']], language:{search:'', searchPlaceholder:'Search…'}}); });
+
+function demoAct(status){
+    Swal.fire({icon:'success', title:'Demo Mode', text:`In the full system, this would set the appointment status to "${status}" and notify the patient.`, confirmButtonColor:'#16A34A'});
+}
+</script>
+</body></html>

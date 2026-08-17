@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Medicines — RHU Makilala HMIS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head><body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="assets/js/shell.js"></script>
+<script>
+const meds = [
+    {code:'MED-001', name:'Amoxicillin', generic:'Amoxicillin trihydrate', category:'Antibiotic', form:'Capsule', strength:'500mg', unit:'capsules', stock:12, reorder:20, expiry:'Dec 15, 2026', status:'active', low:true},
+    {code:'MED-002', name:'Paracetamol', generic:'Acetaminophen', category:'Analgesic', form:'Tablet', strength:'500mg', unit:'tablets', stock:8, reorder:30, expiry:'Feb 20, 2027', status:'active', low:true},
+    {code:'MED-003', name:'Ibuprofen', generic:'Ibuprofen', category:'NSAID', form:'Tablet', strength:'200mg', unit:'tablets', stock:15, reorder:20, expiry:'Sep 15, 2026', status:'active', low:true},
+    {code:'MED-004', name:'Cetirizine', generic:'Cetirizine HCl', category:'Antihistamine', form:'Tablet', strength:'10mg', unit:'tablets', stock:18, reorder:25, expiry:'Nov 30, 2026', status:'active', low:true},
+    {code:'MED-005', name:'Losartan', generic:'Losartan potassium', category:'Antihypertensive', form:'Tablet', strength:'50mg', unit:'tablets', stock:145, reorder:30, expiry:'Mar 10, 2027', status:'active', low:false},
+    {code:'MED-006', name:'Metformin', generic:'Metformin HCl', category:'Antidiabetic', form:'Tablet', strength:'500mg', unit:'tablets', stock:220, reorder:50, expiry:'Jun 20, 2027', status:'active', low:false},
+    {code:'MED-007', name:'Salbutamol', generic:'Salbutamol sulfate', category:'Bronchodilator', form:'Inhaler', strength:'100mcg', unit:'inhalers', stock:35, reorder:10, expiry:'Aug 05, 2027', status:'active', low:false},
+    {code:'MED-008', name:'Vitamin C', generic:'Ascorbic acid', category:'Vitamin', form:'Tablet', strength:'500mg', unit:'tablets', stock:485, reorder:100, expiry:'Dec 30, 2027', status:'active', low:false},
+    {code:'MED-009', name:'ORS', generic:'Oral Rehydration Salts', category:'Electrolyte', form:'Sachet', strength:'20.5g', unit:'sachets', stock:78, reorder:30, expiry:'Oct 15, 2027', status:'active', low:false},
+    {code:'MED-010', name:'Amoxicillin Syrup', generic:'Amoxicillin', category:'Antibiotic', form:'Syrup', strength:'250mg/5ml', unit:'bottles', stock:0, reorder:15, expiry:'Nov 15, 2025', status:'active', low:true, expired:true},
+];
+
+const badge = (cls, text) => `<span class="badge bg-${cls}-subtle text-${cls} rounded-pill px-3 py-2">${text}</span>`;
+
+const content = `
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div><h4 class="fw-bold mb-1">Medicine Inventory</h4><small class="text-muted">Master list — batches are managed under Batch / Stock.</small></div>
+    <button class="btn btn-primary" onclick="Swal.fire('Demo Mode','Add medicine form would appear here.','info')"><i class="fa-solid fa-plus me-2"></i>Add Medicine</button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table id="tbl" class="table">
+            <thead><tr><th>Code</th><th>Name</th><th>Category</th><th>Form / Strength</th><th>Unit</th><th>Stock</th><th>Reorder</th><th>Nearest Expiry</th><th>Status</th><th></th></tr></thead>
+            <tbody>
+                ${meds.map(m => `
+                    <tr>
+                        <td class="fw-semibold text-success">${m.code}</td>
+                        <td><div class="fw-semibold">${m.name}</div><small class="text-muted">${m.generic}</small></td>
+                        <td>${m.category}</td>
+                        <td>${m.form} ${m.strength}</td>
+                        <td>${m.unit}</td>
+                        <td>${badge(m.low?'warning':'success', m.stock)}</td>
+                        <td>${m.reorder}</td>
+                        <td><small ${m.expired?'style="color:#B91C1C;font-weight:600"':''}>${m.expiry}${m.expired?' ⚠️':''}</small></td>
+                        <td>${badge('success','Active')}</td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" onclick="Swal.fire('Demo Mode','Edit medicine form here.','info')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="Swal.fire('Demo Mode','Delete confirmation here.','info')"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+</div>
+`;
+
+mountShell('pharmacist', 'medicines', 'Medicines', content);
+$(function(){ $('#tbl').DataTable({pageLength:10, order:[], language:{search:'', searchPlaceholder:'Search medicines…'}}); });
+</script>
+</body></html>

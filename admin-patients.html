@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Patients — RHU Makilala HMIS</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="assets/css/app.css">
+</head><body>
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.all.min.js"></script>
+<script src="assets/js/shell.js"></script>
+<script>
+const patients = [
+    {code:'PT-000001', first:'Juan', last:'Dela Cruz', sex:'Male', age:35, barangay:'Poblacion', contact:'0920 123 4567', reg:'Aug 15, 2026', initials:'JD'},
+    {code:'PT-000002', first:'Maria', last:'Santos', sex:'Female', age:28, barangay:'New Bulatukan', contact:'0921 234 5678', reg:'Aug 14, 2026', initials:'MS'},
+    {code:'PT-000003', first:'Pedro', last:'Reyes', sex:'Male', age:52, barangay:'Old Bulatukan', contact:'0922 345 6789', reg:'Aug 12, 2026', initials:'PR'},
+    {code:'PT-000004', first:'Ana', last:'Villanueva', sex:'Female', age:41, barangay:'Batasan', contact:'0923 456 7890', reg:'Aug 10, 2026', initials:'AV'},
+    {code:'PT-000005', first:'Rosa', last:'Aquino', sex:'Female', age:67, barangay:'Poblacion', contact:'0924 567 8901', reg:'Aug 08, 2026', initials:'RA'},
+    {code:'PT-000006', first:'Miguel', last:'Torres', sex:'Male', age:19, barangay:'Sinkatulan', contact:'0925 678 9012', reg:'Aug 05, 2026', initials:'MT'},
+    {code:'PT-000007', first:'Elena', last:'Garcia', sex:'Female', age:33, barangay:'New Israel', contact:'0926 789 0123', reg:'Aug 03, 2026', initials:'EG'},
+    {code:'PT-000008', first:'Carlos', last:'Mendoza', sex:'Male', age:45, barangay:'Malungon', contact:'0927 890 1234', reg:'Aug 01, 2026', initials:'CM'},
+    {code:'PT-000009', first:'Linda', last:'Ramos', sex:'Female', age:29, barangay:'Poblacion', contact:'0928 901 2345', reg:'Jul 30, 2026', initials:'LR'},
+    {code:'PT-000010', first:'Ramon', last:'Cruz', sex:'Male', age:60, barangay:'Buenavista', contact:'0929 012 3456', reg:'Jul 28, 2026', initials:'RC'},
+];
+
+const avatar = (initials) => `<div style="width:40px;height:40px;border-radius:12px;background:linear-gradient(135deg,#DCFCE7,#4ADE80);color:#166534;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">${initials}</div>`;
+
+const content = `
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <div><h4 class="fw-bold mb-1">Patients</h4><small class="text-muted">Register, edit and search patients.</small></div>
+    <button class="btn btn-primary" onclick="Swal.fire('Demo Mode','This is a static preview. Full functionality requires the PHP backend.','info')">
+        <i class="fa-solid fa-user-plus me-2"></i>Register Patient
+    </button>
+</div>
+
+<div class="card">
+    <div class="card-body">
+        <table id="tbl" class="table">
+            <thead><tr><th></th><th>Code</th><th>Name</th><th>Sex</th><th>Age</th><th>Barangay</th><th>Contact</th><th>Registered</th><th></th></tr></thead>
+            <tbody>
+                ${patients.map(p => `
+                    <tr>
+                        <td>${avatar(p.initials)}</td>
+                        <td class="fw-semibold text-success">${p.code}</td>
+                        <td><a class="link-primary fw-semibold" href="#" onclick="return demoView('${p.first} ${p.last}')">${p.first} ${p.last}</a></td>
+                        <td>${p.sex}</td>
+                        <td>${p.age}</td>
+                        <td>${p.barangay}</td>
+                        <td>${p.contact}</td>
+                        <td><small>${p.reg}</small></td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-primary" onclick="demoView('${p.first} ${p.last}')"><i class="fa-solid fa-eye"></i></button>
+                            <button class="btn btn-sm btn-outline-primary" onclick="Swal.fire('Demo Mode','Edit form would appear here.','info')"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-sm btn-outline-danger" onclick="Swal.fire('Demo Mode','Delete confirmation would appear here.','info')"><i class="fa-solid fa-trash"></i></button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    </div>
+</div>
+`;
+
+mountShell('admin', 'patients', 'Patients', content);
+
+$(function(){
+    $('#tbl').DataTable({pageLength:10, order:[], columnDefs:[{orderable:false, targets:[0,-1]}], language:{search:'', searchPlaceholder:'Search…'}});
+});
+
+function demoView(name){
+    Swal.fire({icon:'info', title:'Demo Mode', html:`In the full system, this would open the detailed profile of <strong>${name}</strong> with medical history and appointments.`, confirmButtonColor:'#16A34A'});
+    return false;
+}
+</script>
+</body></html>
